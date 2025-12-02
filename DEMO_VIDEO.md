@@ -1,342 +1,188 @@
-# Guía para Grabar Video de Demostración
+# Guía para Video de Demostración (10-12 minutos)
 
-## Script de Demostración
+## PREPARACIÓN
 
-Este documento proporciona el guión completo para grabar un video explicando el sistema RAG de certificaciones AWS ML.
-
----
-
-## PREPARACIÓN (Antes de Grabar)
-
-### 1. Iniciar el Sistema
 ```bash
 cd rag-certifications-agent
 source venv/bin/activate
 python run_chat.py
 ```
 
-### 2. Abrir Navegador
-- Abrir http://localhost:8501
-- Tener listo el navegador a pantalla completa
-
-### 3. Tener Listos
-- Terminal con el código fuente abierto
-- Editor con estructura de proyecto visible
-- Navegador con la interfaz web
+Tener listos:
+- Terminal con código
+- Navegador en http://localhost:8501
+- Editor con estructura del proyecto
 
 ---
 
-## GUIÓN DEL VIDEO (15-20 minutos)
+## GUIÓN DEL VIDEO
 
-### INTRODUCCIÓN (2 min)
+### INTRODUCCIÓN (1 min)
 
-**[Pantalla: Título del Proyecto]**
+**[Pantalla: Título]**
 
-"Hola, voy a presentar un sistema RAG completo para consultas sobre certificaciones AWS Machine Learning.
+"Hola, este es un sistema RAG para consultas sobre certificaciones AWS Machine Learning.
 
-Este proyecto resuelve un problema real: los empleados necesitan consultar información sobre certificaciones sin tener que leer documentos extensos.
+El problema: empleados necesitan consultar información sin leer documentos extensos.
 
-La solución es un agente conversacional que responde preguntas precisas basadas en el documento oficial de AWS."
+La solución: agente conversacional con respuestas precisas basadas en el documento oficial de AWS."
 
 ---
 
-### PARTE 1: ARQUITECTURA DEL SISTEMA (3 min)
+### ARQUITECTURA (2 min)
 
 **[Pantalla: Estructura de carpetas]**
 
-"El proyecto está organizado de forma modular:
+"Proyecto modular:
 
-- **data/**: Contiene el PDF de certificaciones AWS ML y la base de datos vectorial
-- **src/**: Código fuente principal
-  - rag_agent.py: Motor del sistema RAG
-  - chat_interface.py: Interfaz web con Streamlit
-  - config.py: Configuración centralizada
-  - evaluator.py: Sistema de evaluación
-- **run_chat.py**: Script para iniciar la aplicación
-- **demo.py**: Script de demostración
+- data/: PDF y base de datos vectorial
+- src/: Código fuente
+  - rag_agent.py: Motor RAG
+  - chat_interface.py: Interfaz Streamlit
+  - config.py: Configuración
+  - evaluator.py: Evaluación
 
-**[Pantalla: Diagrama de flujo o código de rag_agent.py]**
-
-La arquitectura utiliza:
-- LangChain para orquestar el sistema RAG
-- Sentence Transformers para embeddings semánticos
-- ChromaDB como base de datos vectorial
-- OpenAI GPT-3.5 para generación de respuestas
-- Streamlit para la interfaz web"
+Tecnologías:
+- LangChain + OpenAI GPT-3.5
+- Sentence Transformers para embeddings
+- ChromaDB como base vectorial
+- Streamlit para interfaz"
 
 ---
 
-### PARTE 2: CÓMO FUNCIONA EL SISTEMA (5 min)
+### FUNCIONAMIENTO (2 min)
 
-**[Pantalla: Código de rag_agent.py - función initialize]**
+**[Pantalla: Código rag_agent.py]**
 
-"El sistema funciona en varios pasos:
+"Proceso en 5 pasos:
 
-**Paso 1: Procesamiento del PDF**
-```python
-# Extrae texto del PDF usando pdfplumber
-pdf_text = self._extract_text_from_pdf(pdf_path)
-```
-
-**Paso 2: Creación de Chunks**
-```python
-# Divide el texto en chunks de 1500 caracteres con overlap de 300
-# Esto asegura contexto completo sin cortar información importante
-text_chunks = self._create_text_chunks(pdf_text)
-```
-
-**Paso 3: Generación de Embeddings**
-- Convierte cada chunk en un vector numérico de 384 dimensiones
-- Captura el significado semántico del texto
-- Permite búsquedas por similitud, no por palabras exactas
-
-**Paso 4: Almacenamiento Vectorial**
-- Guarda los embeddings en ChromaDB
-- Permite búsquedas rápidas y eficientes
-- Se carga una sola vez y queda en memoria
-
-**Paso 5: Respuesta a Preguntas**
-```python
-# 1. Usuario hace una pregunta
-# 2. Sistema busca los 3 chunks más relevantes
-source_documents = self.retriever.invoke(question)
-
-# 3. Combina los chunks como contexto
-context = "\n\n".join([doc.page_content for doc in source_documents])
-
-# 4. Envía contexto + pregunta a GPT-3.5
-answer = self.llm.invoke(formatted_prompt).content
-```"
+1. Extrae texto del PDF
+2. Divide en chunks de 1500 caracteres
+3. Genera embeddings (vectores de 384 dimensiones)
+4. Guarda en ChromaDB
+5. Para responder:
+   - Busca 3 chunks más relevantes
+   - Combina como contexto
+   - Envía a GPT-3.5"
 
 ---
 
-### PARTE 3: DEMOSTRACIÓN EN VIVO (7 min)
+### DEMO EN VIVO (5 min)
 
-**[Pantalla: Interfaz Web de Streamlit]**
+**[Pantalla: Interfaz Web]**
 
-"Ahora veamos el sistema en acción.
+"Veamos el sistema en acción.
 
-**Pregunta 1: Estructura del Examen**
+**Pregunta 1:**
+[Escribir]: '¿Cuáles son los dominios del examen AWS ML?'
 
-[Escribir en el chat]: '¿Cuáles son los 4 dominios del examen AWS Machine Learning?'
+[Mostrar respuesta con 4 dominios y porcentajes]
 
-[Esperar respuesta]
+Vean las fuentes consultadas abajo.
 
-Como pueden ver, el sistema responde con una lista clara:
-- Dominio 1: Ingeniería de datos (20%)
-- Dominio 2: Análisis exploratorio (24%)
-- Dominio 3: Modelado (36%)
-- Dominio 4: Implementación (20%)
-
-Y aquí abajo podemos ver las fuentes consultadas. El sistema muestra exactamente qué partes del documento usó para responder.
-
-**Pregunta 2: Información Específica**
-
+**Pregunta 2:**
 [Escribir]: '¿Cuánto cuesta y cuánto dura el examen?'
 
-[Esperar respuesta]
+[Mostrar]: 750 dólares, 180 minutos.
 
-Respuesta directa: 750 dólares y 180 minutos. El sistema extrae datos específicos del documento.
+**Pregunta 3:**
+[Escribir]: '¿Qué tipos de preguntas tiene el examen?'
 
-**Pregunta 3: Detalles Técnicos**
+[Mostrar respuesta detallada]
 
-[Escribir]: '¿Qué temas cubre el dominio de Modelado?'
-
-[Esperar respuesta]
-
-El sistema proporciona una respuesta detallada con los subtemas específicos.
-
-**[Mostrar sidebar]**
-
-En el panel lateral vemos:
+**[Sidebar]**
 - Estadísticas de uso
-- Número de documentos en la base de datos
-- Tiempo promedio de respuesta
-- Opción para limpiar historial"
+- Documentos en vectorstore
+- Tiempo de respuesta"
 
 ---
 
-### PARTE 4: CÓDIGO Y CONFIGURACIÓN (3 min)
+### INSTALACIÓN (1 min)
 
-**[Pantalla: src/config.py]**
+**[Pantalla: Terminal]**
 
-"El sistema es altamente configurable:
-
-```python
-# Parámetros de chunks
-CHUNK_SIZE = 1500
-CHUNK_OVERLAP = 300
-
-# Modelos utilizados
-EMBEDDING_MODEL = 'sentence-transformers/all-MiniLM-L6-v2'
-LLM_MODEL = 'gpt-3.5-turbo'
-
-# Número de fuentes a consultar
-MAX_SOURCES = 3
-```
-
-**[Pantalla: src/rag_agent.py - función ask]**
-
-El prompt está optimizado para respuestas directas:
-
-```python
-qa_template = '''
-Eres un asistente experto en certificaciones AWS ML.
-Responde DIRECTAMENTE usando SOLO la información del contexto.
-Sé específico y concreto.
-Si hay números o datos, menciónalos.
-'''
-```"
-
----
-
-### PARTE 5: SCRIPT DE DEMOSTRACIÓN (2 min)
-
-**[Pantalla: Terminal ejecutando demo.py]**
-
-"Incluí un script de demostración completo:
+"Para usar:
 
 ```bash
-python demo.py
-```
-
-[Ejecutar y mostrar salida]
-
-Este script:
-- Inicializa el sistema
-- Hace preguntas de ejemplo
-- Muestra las respuestas y fuentes
-- Presenta estadísticas
-- Explica casos de uso
-
-Es perfecto para presentaciones o para entender rápidamente cómo funciona todo."
-
----
-
-### PARTE 6: INSTALACIÓN Y USO (2 min)
-
-**[Pantalla: README.md]**
-
-"Para usar el sistema:
-
-```bash
-# 1. Clonar repositorio
 git clone https://github.com/lorios22/rag-certifications-agent.git
 cd rag-certifications-agent
-
-# 2. Crear entorno virtual
-python -m venv venv
-source venv/bin/activate
-
-# 3. Instalar dependencias
 pip install -r requirements.txt
-
-# 4. Configurar API key
 cp env.example .env
-# Editar .env con tu OPENAI_API_KEY
-
-# 5. Ejecutar
+# Editar .env con OPENAI_API_KEY
 python run_chat.py
 ```
 
-Y listo, la aplicación estará en http://localhost:8501"
+Listo en http://localhost:8501"
 
 ---
 
 ### CONCLUSIÓN (1 min)
 
-**[Pantalla: Resumen visual]**
+**[Pantalla: Resumen]**
 
-"En resumen, este proyecto proporciona:
+"En resumen:
 
-✓ Sistema RAG completo y funcional
-✓ Respuestas precisas basadas en documentos oficiales
-✓ Interfaz web intuitiva
-✓ Código modular y extensible
-✓ Fácil de instalar y usar
+- Sistema RAG completo
+- Respuestas precisas con fuentes
+- Interfaz intuitiva
+- Fácil instalación
 
-**Casos de uso:**
-- Recursos Humanos: consultar información de certificaciones
-- Desarrolladores: preparación para exámenes
-- Gestores: planificación de programas de formación
+Casos de uso:
+- RR.HH: info de certificaciones
+- Devs: preparación exámenes
+- Gestores: planificación
 
-**Tecnologías:**
-- Python, LangChain, OpenAI GPT-3.5
-- Sentence Transformers, ChromaDB
-- Streamlit, pdfplumber
+Código en GitHub, completamente documentado.
 
-El código está disponible en GitHub y está completamente documentado.
-
-Gracias por ver la demostración."
+Gracias."
 
 ---
 
-## TIPS PARA LA GRABACIÓN
+## TIPS GRABACIÓN
 
-### Preparación Técnica
-- Resolución mínima: 1920x1080
-- Usar modo oscuro/claro consistente en todo el video
-- Cerrar notificaciones y aplicaciones innecesarias
-- Tener buen micrófono
+### Técnico
+- Resolución: 1920x1080
+- Cerrar notificaciones
+- Modo consistente (oscuro/claro)
 
-### Durante la Grabación
-- Hablar claro y a buen ritmo
-- Hacer pausas entre secciones
-- Mostrar código importante en pantalla completa
-- Hacer zoom en partes importantes del código
+### Grabación
+- Hablar claro y pausado
+- Hacer zoom en código importante
+- Pausas entre secciones
 
-### Secciones que Puedes Grabar por Separado
-1. Introducción y arquitectura
-2. Explicación de código
-3. Demostración en vivo
-4. Instalación y conclusión
-
-### Edición Post-Grabación
-- Agregar títulos y subtítulos
-- Resaltar líneas de código importantes
-- Incluir diagramas si es posible
-- Agregar música de fondo suave
-- Incluir timestamps en la descripción
+### Edición
+- Agregar títulos
+- Resaltar código clave
+- Timestamps en descripción
 
 ---
 
-## CHECKLIST PRE-GRABACIÓN
+## CHECKLIST
 
-- [ ] Sistema funcionando correctamente
-- [ ] Navegador en pantalla completa
-- [ ] Terminal limpia y lista
-- [ ] Editor de código abierto con archivos correctos
-- [ ] Micrófono funcionando
-- [ ] Notificaciones desactivadas
-- [ ] Aplicaciones innecesarias cerradas
-- [ ] Guión revisado
-- [ ] Ejemplos de preguntas preparadas
+- [ ] Sistema funcionando
+- [ ] Navegador pantalla completa
+- [ ] Terminal limpia
+- [ ] Micrófono ok
+- [ ] Notificaciones off
 
 ---
 
-## PREGUNTAS DE EJEMPLO PARA EL VIDEO
+## PREGUNTAS PARA EL VIDEO
 
 1. ¿Cuáles son los dominios del examen?
 2. ¿Cuánto cuesta el examen?
 3. ¿Cuánto tiempo dura?
-4. ¿Qué porcentaje corresponde a Modelado?
-5. ¿Qué tipos de preguntas tiene el examen?
-6. ¿Cuántas preguntas tiene el examen?
-7. ¿Qué temas cubre el dominio de Ingeniería de datos?
+4. ¿Qué tipos de preguntas tiene?
 
 ---
 
-## DURACIÓN SUGERIDA POR SECCIÓN
+## DURACIÓN POR SECCIÓN
 
-- Introducción: 2 min
-- Arquitectura: 3 min
-- Funcionamiento: 5 min
-- Demostración en vivo: 7 min
-- Código: 3 min
-- Instalación: 2 min
+- Introducción: 1 min
+- Arquitectura: 2 min
+- Funcionamiento: 2 min
+- Demo en vivo: 5 min
+- Instalación: 1 min
 - Conclusión: 1 min
 
-**Total: 23 minutos**
-
-Puedes ajustar según necesites. Para un video más corto (10-12 min), enfócate en la demostración en vivo.
-
+**Total: 12 minutos**
